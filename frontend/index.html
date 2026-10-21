@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phone Charging Tracker</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+<!-- ── Login Screen ─────────────────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-card">
+    <h1>🔋 Charging Tracker</h1>
+    <p>Sign in to manage charging jobs</p>
+    <div id="login-error" class="alert alert-error hidden"></div>
+    <form id="login-form" novalidate>
+      <div class="form-group">
+        <label for="login-username">Username</label>
+        <input id="login-username" type="text" autocomplete="username" placeholder="Username" required />
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" autocomplete="current-password" placeholder="Password" required />
+      </div>
+      <button class="btn btn-primary btn-full" type="submit">Sign In</button>
+    </form>
+    <p style="font-size:.78rem;color:var(--neutral-400);margin-top:1rem;text-align:center">
+      Default account: <code>admin</code> / <code>Admin1234</code> — change immediately.
+    </p>
+  </div>
+</div>
+
+<!-- ── Main App ──────────────────────────────────────────────────── -->
+<div id="app" class="hidden">
+
+  <header>
+    <h1>🔋 Phone Charging Tracker</h1>
+    <div id="nav-links">
+      <button data-screen="dashboard" id="nav-dashboard">Dashboard</button>
+      <button data-screen="intake"    id="nav-intake">New Intake</button>
+      <button data-screen="search"    id="nav-search">Search / Collect</button>
+      <button data-screen="history"   id="nav-history">History</button>
+      <button id="nav-logout">Sign Out</button>
+    </div>
+    <div id="staff-info">
+      <span id="staff-display"></span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Dashboard -->
+    <div id="screen-dashboard" class="screen hidden"></div>
+
+    <!-- New Intake -->
+    <div id="screen-intake" class="screen hidden"></div>
+
+    <!-- Search / Collection -->
+    <div id="screen-search" class="screen hidden"></div>
+
+    <!-- History -->
+    <div id="screen-history" class="screen hidden"></div>
+  </main>
+
+</div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>
