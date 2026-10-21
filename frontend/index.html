@@ -10,7 +10,9 @@
 
 <!-- ── Login Screen ─────────────────────────────────────────────── -->
 <div id="login-screen">
-  <div class="login-card">
+
+  <!-- Login Panel -->
+  <div class="login-card" id="panel-login">
     <h1>🔋 Charging Tracker</h1>
     <p>Sign in to manage charging jobs</p>
     <div id="login-error" class="alert alert-error hidden"></div>
@@ -25,10 +27,45 @@
       </div>
       <button class="btn btn-primary btn-full" type="submit">Sign In</button>
     </form>
-    <p style="font-size:.78rem;color:var(--neutral-400);margin-top:1rem;text-align:center">
-      Default account: <code>admin</code> / <code>Admin1234</code> — change immediately.
+    <hr class="divider" />
+    <p style="text-align:center;font-size:.88rem;color:var(--neutral-600)">
+      New staff member?
+      <button class="btn btn-secondary btn-sm" id="show-register-btn" style="margin-left:.4rem">Create Account</button>
     </p>
   </div>
+
+  <!-- Register Panel -->
+  <div class="login-card hidden" id="panel-register">
+    <h1>🔋 Create Account</h1>
+    <p>Request a staff account. An owner will activate it.</p>
+    <div id="register-error"   class="alert alert-error   hidden"></div>
+    <div id="register-success" class="alert alert-success hidden"></div>
+    <form id="register-form" novalidate>
+      <div class="form-group">
+        <label for="reg-displayname">Full Name *</label>
+        <input id="reg-displayname" type="text" placeholder="e.g. John Doe" required />
+      </div>
+      <div class="form-group">
+        <label for="reg-username">Username *</label>
+        <input id="reg-username" type="text" placeholder="Choose a username" autocomplete="off" required />
+      </div>
+      <div class="form-group">
+        <label for="reg-password">Password *</label>
+        <input id="reg-password" type="password" placeholder="At least 8 characters" autocomplete="new-password" required />
+      </div>
+      <div class="form-group">
+        <label for="reg-password2">Confirm Password *</label>
+        <input id="reg-password2" type="password" placeholder="Repeat password" autocomplete="new-password" required />
+      </div>
+      <button class="btn btn-primary btn-full" type="submit">Register</button>
+    </form>
+    <hr class="divider" />
+    <p style="text-align:center;font-size:.88rem;color:var(--neutral-600)">
+      Already have an account?
+      <button class="btn btn-secondary btn-sm" id="show-login-btn" style="margin-left:.4rem">Sign In</button>
+    </p>
+  </div>
+
 </div>
 
 <!-- ── Main App ──────────────────────────────────────────────────── -->
@@ -41,6 +78,7 @@
       <button data-screen="intake"    id="nav-intake">New Intake</button>
       <button data-screen="search"    id="nav-search">Search / Collect</button>
       <button data-screen="history"   id="nav-history">History</button>
+      <button data-screen="staff"     id="nav-staff"  class="hidden">Staff</button>
       <button id="nav-logout">Sign Out</button>
     </div>
     <div id="staff-info">
@@ -60,6 +98,9 @@
 
     <!-- History -->
     <div id="screen-history" class="screen hidden"></div>
+
+    <!-- Staff Management (owner only) -->
+    <div id="screen-staff" class="screen hidden"></div>
   </main>
 
 </div>

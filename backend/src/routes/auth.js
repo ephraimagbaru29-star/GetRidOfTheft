@@ -6,6 +6,36 @@ const { requireAuth, requireOwner } = require('../middleware/auth');
 
 const router = express.Router();
 
+// POST /api/auth/register  — public self-registration (creates inactive attendant account)
+router.post('/register', async (req, res) => {
+  const { display_name, username, password } = req.body;
+  if (!display_name || !username || !password) {
+    return res.status(400).json({ error: 'display_name, username, and password are required' });
+  }
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  }
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    const result = await query(
+      `INSERT INTO staff_users (display_name, username, role, password_hash, active)
+       VALUES ($1, $2, 'attendant', $3, FALSE)
+       RETURNING id, display_name, username, role, active, created_at`,
+      [display_name.trim(), username.trim().toLowerCase(), hash]
+    );
+    return res.status(201).json({
+      message: 'Account created. An owner must activate it before you can sign in.',
+      staff: result.rows[0],
+    });
+  } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'That username is already taken' });
+    }
+    console.error(err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;

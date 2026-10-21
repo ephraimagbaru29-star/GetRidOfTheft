@@ -1,9 +1,16 @@
 /**
  * Thin API client — wraps fetch calls to the backend.
  * All methods throw on non-2xx responses (with the server's error message).
+ *
+ * Set API_BASE to your deployed backend URL when frontend and backend
+ * are on different domains, e.g.:
+ *   const API_BASE = 'https://your-backend.railway.app/api';
  */
 
-const API_BASE = '/api';
+const API_BASE = (
+  window.__API_BASE__ ||          // injected at deploy time if needed
+  (window.location.hostname === 'localhost' ? '/api' : '/api')
+);
 
 function getToken() {
   return sessionStorage.getItem('ct_token');
@@ -41,8 +48,33 @@ export async function login(username, password) {
   return handleResponse(res);
 }
 
+export async function register(display_name, username, password) {
+  const res = await fetch(`${API_BASE}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ display_name, username, password }),
+  });
+  return handleResponse(res);
+}
+
 export async function getMe() {
   const res = await fetch(`${API_BASE}/auth/me`, { headers: authHeaders() });
+  return handleResponse(res);
+}
+
+// GET /api/auth/staff  — list all staff (owner only)
+export async function listStaff() {
+  const res = await fetch(`${API_BASE}/auth/staff`, { headers: authHeaders() });
+  return handleResponse(res);
+}
+
+// PATCH /api/auth/staff/:id  — toggle active / change role
+export async function updateStaff(id, data) {
+  const res = await fetch(`${API_BASE}/auth/staff/${id}`, {
+    method: 'PATCH',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
   return handleResponse(res);
 }
 

@@ -32,6 +32,17 @@ function showLoginScreen() {
   Utils.hide(document.getElementById('app'));
   Utils.show(document.getElementById('login-screen'));
 
+  // Panel toggle
+  document.getElementById('show-register-btn').addEventListener('click', () => {
+    Utils.hide(document.getElementById('panel-login'));
+    Utils.show(document.getElementById('panel-register'));
+  });
+  document.getElementById('show-login-btn').addEventListener('click', () => {
+    Utils.hide(document.getElementById('panel-register'));
+    Utils.show(document.getElementById('panel-login'));
+  });
+
+  // Login form
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const errEl = document.getElementById('login-error');
@@ -50,6 +61,39 @@ function showLoginScreen() {
       Utils.show(errEl);
     }
   });
+
+  // Register form
+  document.getElementById('register-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl  = document.getElementById('register-error');
+    const okEl   = document.getElementById('register-success');
+    Utils.hide(errEl);
+    Utils.hide(okEl);
+
+    const display_name = document.getElementById('reg-displayname').value.trim();
+    const username     = document.getElementById('reg-username').value.trim();
+    const password     = document.getElementById('reg-password').value;
+    const password2    = document.getElementById('reg-password2').value;
+
+    if (password !== password2) {
+      errEl.textContent = 'Passwords do not match.';
+      return Utils.show(errEl);
+    }
+    if (password.length < 8) {
+      errEl.textContent = 'Password must be at least 8 characters.';
+      return Utils.show(errEl);
+    }
+
+    try {
+      await API.register(display_name, username, password);
+      okEl.textContent = '✅ Account created! An owner must activate it before you can sign in.';
+      Utils.show(okEl);
+      document.getElementById('register-form').reset();
+    } catch (err) {
+      errEl.textContent = err.message;
+      Utils.show(errEl);
+    }
+  });
 }
 
 function showApp() {
@@ -57,11 +101,17 @@ function showApp() {
   document.getElementById('staff-display').textContent =
     `${currentStaff.display_name} (${currentStaff.role})`;
 
+  // Show Staff nav only for owners
+  if (currentStaff.role === 'owner') {
+    Utils.show(document.getElementById('nav-staff'));
+  }
+
   // Nav buttons
   document.getElementById('nav-dashboard').addEventListener('click', () => showScreen('dashboard'));
   document.getElementById('nav-intake').addEventListener('click',    () => showScreen('intake'));
   document.getElementById('nav-search').addEventListener('click',    () => showScreen('search'));
   document.getElementById('nav-history').addEventListener('click',   () => showScreen('history'));
+  document.getElementById('nav-staff').addEventListener('click',     () => showScreen('staff'));
   document.getElementById('nav-logout').addEventListener('click',    logout);
 }
 
@@ -86,6 +136,7 @@ function showScreen(name) {
     case 'intake':    renderIntake();    break;
     case 'search':    renderSearch();    break;
     case 'history':   renderHistory();   break;
+    case 'staff':     renderStaff();     break;
   }
 }
 
@@ -747,5 +798,79 @@ async function openJob(id) {
   }, 50);
 }
 
+// ── Staff Management (owner only) ────────────────────────────────
+async function renderStaff() {
+  if (currentStaff.role !== 'owner') return;
+  const el = document.getElementById('screen-staff');
+  el.innerHTML = `
+    <div class="card">
+      <h2>Staff Accounts</h2>
+      <p style="font-size:.85rem;color:var(--neutral-600);margin-bottom:1rem">
+        Newly registered accounts are <strong>inactive</strong> — activate them here before they can sign in.
+      </p>
+      <div id="staff-alert"></div>
+      <div id="staff-list"><p style="color:var(--neutral-400);font-size:.9rem">Loading…</p></div>
+    </div>
+  `;
+  await loadStaffList();
+}
+
+async function loadStaffList() {
+  const listEl  = document.getElementById('staff-list');
+  const alertEl = document.getElementById('staff-alert');
+  if (!listEl) return;
+  try {
+    const { staff } = await API.listStaff();
+    if (!staff.length) {
+      listEl.innerHTML = '<p style="color:var(--neutral-400);font-size:.9rem">No staff accounts found.</p>';
+      return;
+    }
+    listEl.innerHTML = staff.map(s => `
+      <div class="collect-device-row" style="margin-bottom:.5rem;flex-wrap:wrap;gap:.5rem">
+        <div class="collect-device-info">
+          <strong>${Utils.esc(s.display_name)}</strong>
+          <span style="font-size:.8rem;color:var(--neutral-400);margin-left:.4rem">@${Utils.esc(s.username)}</span>
+          <span style="margin-left:.4rem">${Utils.statusBadge(s.active ? 'active' : 'closed').outerHTML}</span>
+          <br/>
+          <span style="font-size:.8rem;color:var(--neutral-600)">Role: ${Utils.esc(s.role)} · Joined ${Utils.fmtDateTime(s.created_at)}</span>
+        </div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+          ${s.id !== currentStaff.id ? `
+            <button class="btn btn-sm ${s.active ? 'btn-warning' : 'btn-success'}"
+                    onclick="app.toggleStaff('${s.id}', ${!s.active})">
+              ${s.active ? 'Deactivate' : 'Activate'}
+            </button>
+            <button class="btn btn-sm btn-secondary"
+                    onclick="app.changeRole('${s.id}', '${s.role === 'owner' ? 'attendant' : 'owner'}')">
+              Make ${s.role === 'owner' ? 'Attendant' : 'Owner'}
+            </button>
+          ` : '<span style="font-size:.8rem;color:var(--neutral-400)">You</span>'}
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    alertEl && alertEl.append(Utils.renderAlert(err.message));
+  }
+}
+
+async function toggleStaff(id, active) {
+  try {
+    await API.updateStaff(id, { active });
+    await loadStaffList();
+  } catch (err) {
+    alert(`Error: ${err.message}`);
+  }
+}
+
+async function changeRole(id, role) {
+  if (!confirm(`Change this account's role to "${role}"?`)) return;
+  try {
+    await API.updateStaff(id, { role });
+    await loadStaffList();
+  } catch (err) {
+    alert(`Error: ${err.message}`);
+  }
+}
+
 // ── Expose to window for inline onclick handlers ──────────────────
-window.app = { showScreen, openJob };
+window.app = { showScreen, openJob, toggleStaff, changeRole };
