@@ -2,15 +2,15 @@
  * Thin API client — wraps fetch calls to the backend.
  * All methods throw on non-2xx responses (with the server's error message).
  *
- * Set API_BASE to your deployed backend URL when frontend and backend
- * are on different domains, e.g.:
- *   const API_BASE = 'https://your-backend.railway.app/api';
+ * IMPORTANT: Replace the PROD_BACKEND value below with your actual
+ * deployed backend URL (Railway, Render, Fly.io, etc.).
  */
 
-const API_BASE = (
-  window.__API_BASE__ ||          // injected at deploy time if needed
-  (window.location.hostname === 'localhost' ? '/api' : '/api')
-);
+const PROD_BACKEND = 'https://your-backend.railway.app'; // ← replace this
+
+const API_BASE = window.location.hostname === 'localhost'
+  ? '/api'
+  : `${PROD_BACKEND}/api`;
 
 function getToken() {
   return sessionStorage.getItem('ct_token');
