@@ -6,7 +6,7 @@
  * deployed backend URL (Railway, Render, Fly.io, etc.).
  */
 
-const PROD_BACKEND = 'https://your-backend.railway.app'; // ← replace this
+const PROD_BACKEND = 'https://getridoftheft.onrender.com';
 
 const API_BASE = window.location.hostname === 'localhost'
   ? '/api'
