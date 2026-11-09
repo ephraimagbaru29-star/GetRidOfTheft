@@ -28,16 +28,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ── Login ─────────────────────────────────────────────────────────
+let _loginInitialized = false;
+
 function showLoginScreen() {
   Utils.hide(document.getElementById('app'));
   Utils.show(document.getElementById('login-screen'));
 
-  // Panel toggle
+  // Only wire up listeners once to prevent duplicate handlers
+  if (_loginInitialized) return;
+  _loginInitialized = true;
+
+  // Tab switching
   document.getElementById('show-register-btn').addEventListener('click', () => {
+    document.getElementById('tab-login').classList.remove('active');
+    document.getElementById('tab-register').classList.add('active');
     Utils.hide(document.getElementById('panel-login'));
     Utils.show(document.getElementById('panel-register'));
   });
   document.getElementById('show-login-btn').addEventListener('click', () => {
+    document.getElementById('tab-register').classList.remove('active');
+    document.getElementById('tab-login').classList.add('active');
     Utils.hide(document.getElementById('panel-register'));
     Utils.show(document.getElementById('panel-login'));
   });
@@ -46,7 +56,10 @@ function showLoginScreen() {
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const errEl = document.getElementById('login-error');
+    const btn   = e.submitter || document.querySelector('#login-form button[type=submit]');
     Utils.hide(errEl);
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value;
     try {
@@ -59,14 +72,17 @@ function showLoginScreen() {
     } catch (err) {
       errEl.textContent = err.message;
       Utils.show(errEl);
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
     }
   });
 
   // Register form
   document.getElementById('register-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const errEl  = document.getElementById('register-error');
-    const okEl   = document.getElementById('register-success');
+    const errEl = document.getElementById('register-error');
+    const okEl  = document.getElementById('register-success');
+    const btn   = e.submitter || document.querySelector('#register-form button[type=submit]');
     Utils.hide(errEl);
     Utils.hide(okEl);
 
@@ -75,15 +91,13 @@ function showLoginScreen() {
     const password     = document.getElementById('reg-password').value;
     const password2    = document.getElementById('reg-password2').value;
 
-    if (password !== password2) {
-      errEl.textContent = 'Passwords do not match.';
-      return Utils.show(errEl);
-    }
-    if (password.length < 8) {
-      errEl.textContent = 'Password must be at least 8 characters.';
-      return Utils.show(errEl);
-    }
+    if (!display_name) { errEl.textContent = 'Full name is required.'; return Utils.show(errEl); }
+    if (!username)     { errEl.textContent = 'Username is required.'; return Utils.show(errEl); }
+    if (password !== password2) { errEl.textContent = 'Passwords do not match.'; return Utils.show(errEl); }
+    if (password.length < 8)   { errEl.textContent = 'Password must be at least 8 characters.'; return Utils.show(errEl); }
 
+    btn.disabled = true;
+    btn.textContent = 'Creating account…';
     try {
       await API.register(display_name, username, password);
       okEl.textContent = '✅ Account created! An owner must activate it before you can sign in.';
@@ -92,14 +106,21 @@ function showLoginScreen() {
     } catch (err) {
       errEl.textContent = err.message;
       Utils.show(errEl);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Create Account';
     }
   });
 }
 
 function showApp() {
   Utils.show(document.getElementById('app'));
-  document.getElementById('staff-display').textContent =
-    `${currentStaff.display_name} (${currentStaff.role})`;
+  document.getElementById('staff-display').textContent = currentStaff.display_name;
+  // Set avatar initials
+  const avatar = document.getElementById('user-avatar');
+  if (avatar) {
+    avatar.textContent = currentStaff.display_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  }
 
   // Show Staff nav only for owners
   if (currentStaff.role === 'owner') {
@@ -145,19 +166,33 @@ async function renderDashboard() {
   const el = document.getElementById('screen-dashboard');
   el.innerHTML = `
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-value" id="stat-active">…</div><div class="stat-label">Active Jobs</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-partial">…</div><div class="stat-label">Partially Collected</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-devices">…</div><div class="stat-label">Devices In Shop</div></div>
-      <div class="stat-card"><div class="stat-value" id="stat-closed">…</div><div class="stat-label">Closed Today</div></div>
+      <div class="stat-card">
+        <div class="stat-icon blue">📋</div>
+        <div class="stat-body"><div class="stat-value" id="stat-active">—</div><div class="stat-label">Active Jobs</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow">⏳</div>
+        <div class="stat-body"><div class="stat-value" id="stat-partial">—</div><div class="stat-label">Partially Collected</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">📱</div>
+        <div class="stat-body"><div class="stat-value" id="stat-devices">—</div><div class="stat-label">Devices In Shop</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-body"><div class="stat-value" id="stat-closed">—</div><div class="stat-label">Closed Jobs</div></div>
+      </div>
     </div>
     <div class="quick-actions">
       <button class="btn btn-primary" onclick="app.showScreen('intake')">＋ New Intake</button>
-      <button class="btn btn-secondary" onclick="app.showScreen('search')">🔍 Search Number</button>
+      <button class="btn btn-ghost"   onclick="app.showScreen('search')">🔍 Search Number</button>
       <button class="btn btn-secondary" onclick="app.showScreen('history')">📋 History</button>
     </div>
     <div class="card">
-      <h2>Active &amp; Partial Jobs</h2>
-      <div id="dash-jobs-list"><p style="color:var(--neutral-400);font-size:.9rem">Loading…</p></div>
+      <div class="card-header">
+        <h2>Active &amp; Partial Jobs</h2>
+      </div>
+      <div id="dash-jobs-list"><div class="empty-state"><div class="empty-icon">⏳</div><p>Loading…</p></div></div>
     </div>
   `;
 
@@ -176,19 +211,19 @@ async function renderDashboard() {
 
     const listEl = document.getElementById('dash-jobs-list');
     if (!allActive.length) {
-      listEl.innerHTML = '<p style="color:var(--neutral-400);font-size:.9rem">No active jobs.</p>';
+      listEl.innerHTML = '<div class="empty-state"><div class="empty-icon">🎉</div><p>No active jobs right now.</p></div>';
       return;
     }
     listEl.innerHTML = allActive.map(j => `
-      <div class="collect-device-row" style="margin-bottom:.5rem;cursor:pointer"
-           onclick="app.openJob('${j.id}')">
-        <div class="collect-device-info">
-          <strong>${Utils.esc(j.charging_number)}</strong> — ${Utils.esc(j.customer_name)}
-          <span style="margin-left:.5rem">${Utils.statusBadge(j.status).outerHTML}</span>
+      <div class="job-list-item" onclick="app.openJob('${j.id}')">
+        <div>
+          <div class="job-list-item-main">
+            ${Utils.esc(j.charging_number)}
+            ${Utils.statusBadge(j.status).outerHTML}
+          </div>
+          <div class="job-list-item-sub">${Utils.esc(j.customer_name)} · ${j.devices_in_shop} device(s) in shop</div>
         </div>
-        <div style="font-size:.8rem;color:var(--neutral-400)">
-          ${j.devices_in_shop} device(s) in shop · ${Utils.fmtDateTime(j.created_at)}
-        </div>
+        <div class="job-list-item-meta">${Utils.fmtDateTime(j.created_at)}</div>
       </div>
     `).join('');
   } catch (err) {

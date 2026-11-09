@@ -4,66 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phone Charging Tracker</title>
-  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
 <!-- ── Login Screen ─────────────────────────────────────────────── -->
 <div id="login-screen">
 
-  <!-- Login Panel -->
-  <div class="login-card" id="panel-login">
-    <h1>🔋 Charging Tracker</h1>
-    <p>Sign in to manage charging jobs</p>
-    <div id="login-error" class="alert alert-error hidden"></div>
-    <form id="login-form" novalidate>
-      <div class="form-group">
-        <label for="login-username">Username</label>
-        <input id="login-username" type="text" autocomplete="username" placeholder="Username" required />
-      </div>
-      <div class="form-group">
-        <label for="login-password">Password</label>
-        <input id="login-password" type="password" autocomplete="current-password" placeholder="Password" required />
-      </div>
-      <button class="btn btn-primary btn-full" type="submit">Sign In</button>
-    </form>
-    <hr class="divider" />
-    <p style="text-align:center;font-size:.88rem;color:var(--neutral-600)">
-      New staff member?
-      <button class="btn btn-secondary btn-sm" id="show-register-btn" style="margin-left:.4rem">Create Account</button>
-    </p>
-  </div>
+  <div class="login-card">
+    <!-- Logo -->
+    <div class="login-logo">
+      <div class="logo-icon">🔋</div>
+      <h1>ChargeTrack</h1>
+      <p>Phone Charging Management System</p>
+    </div>
 
-  <!-- Register Panel -->
-  <div class="login-card hidden" id="panel-register">
-    <h1>🔋 Create Account</h1>
-    <p>Request a staff account. An owner will activate it.</p>
-    <div id="register-error"   class="alert alert-error   hidden"></div>
-    <div id="register-success" class="alert alert-success hidden"></div>
-    <form id="register-form" novalidate>
-      <div class="form-group">
-        <label for="reg-displayname">Full Name *</label>
-        <input id="reg-displayname" type="text" placeholder="e.g. John Doe" required />
-      </div>
-      <div class="form-group">
-        <label for="reg-username">Username *</label>
-        <input id="reg-username" type="text" placeholder="Choose a username" autocomplete="off" required />
-      </div>
-      <div class="form-group">
-        <label for="reg-password">Password *</label>
-        <input id="reg-password" type="password" placeholder="At least 8 characters" autocomplete="new-password" required />
-      </div>
-      <div class="form-group">
-        <label for="reg-password2">Confirm Password *</label>
-        <input id="reg-password2" type="password" placeholder="Repeat password" autocomplete="new-password" required />
-      </div>
-      <button class="btn btn-primary btn-full" type="submit">Register</button>
-    </form>
-    <hr class="divider" />
-    <p style="text-align:center;font-size:.88rem;color:var(--neutral-600)">
-      Already have an account?
-      <button class="btn btn-secondary btn-sm" id="show-login-btn" style="margin-left:.4rem">Sign In</button>
-    </p>
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="
+        this.classList.add('active');
+        document.getElementById('tab-register').classList.remove('active');
+        document.getElementById('panel-login').classList.remove('hidden');
+        document.getElementById('panel-register').classList.add('hidden');
+      ">Sign In</button>
+      <button class="auth-tab" id="tab-register" onclick="
+        this.classList.add('active');
+        document.getElementById('tab-login').classList.remove('active');
+        document.getElementById('panel-register').classList.remove('hidden');
+        document.getElementById('panel-login').classList.add('hidden');
+      ">Create Account</button>
+    </div>
+
+    <!-- Login Panel -->
+    <div id="panel-login">
+      <div id="login-error" class="alert alert-error hidden"></div>
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <input id="login-username" type="text" autocomplete="username" placeholder="Enter your username" required />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input id="login-password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" type="submit">Sign In →</button>
+      </form>
+      <p style="text-align:center;font-size:.83rem;color:var(--text-muted);margin-top:1rem">
+        New here?
+        <button id="show-register-btn" style="background:none;border:none;color:var(--accent);font-weight:600;cursor:pointer;font-size:.83rem;font-family:inherit">Create an account</button>
+      </p>
+    </div>
+
+    <!-- Register Panel -->
+    <div id="panel-register" class="hidden">
+      <div id="register-error"   class="alert alert-error   hidden"></div>
+      <div id="register-success" class="alert alert-success hidden"></div>
+      <form id="register-form" novalidate>
+        <div class="form-group">
+          <label for="reg-displayname">Full Name</label>
+          <input id="reg-displayname" type="text" placeholder="e.g. John Doe" required />
+        </div>
+        <div class="form-group">
+          <label for="reg-username">Username</label>
+          <input id="reg-username" type="text" placeholder="Choose a username" autocomplete="off" required />
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Password</label>
+          <input id="reg-password" type="password" placeholder="At least 8 characters" autocomplete="new-password" required />
+        </div>
+        <div class="form-group">
+          <label for="reg-password2">Confirm Password</label>
+          <input id="reg-password2" type="password" placeholder="Repeat password" autocomplete="new-password" required />
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" type="submit">Create Account →</button>
+      </form>
+      <p style="text-align:center;font-size:.83rem;color:var(--text-muted);margin-top:1rem">
+        Already have an account?
+        <button id="show-login-btn" style="background:none;border:none;color:var(--accent);font-weight:600;cursor:pointer;font-size:.83rem;font-family:inherit">Sign in</button>
+      </p>
+    </div>
   </div>
 
 </div>
@@ -72,16 +91,20 @@
 <div id="app" class="hidden">
 
   <header>
-    <h1>🔋 Phone Charging Tracker</h1>
+    <div class="header-brand">
+      <div class="brand-icon">🔋</div>
+      ChargeTrack
+    </div>
     <div id="nav-links">
       <button data-screen="dashboard" id="nav-dashboard">Dashboard</button>
       <button data-screen="intake"    id="nav-intake">New Intake</button>
       <button data-screen="search"    id="nav-search">Search / Collect</button>
       <button data-screen="history"   id="nav-history">History</button>
-      <button data-screen="staff"     id="nav-staff"  class="hidden">Staff</button>
+      <button data-screen="staff"     id="nav-staff" class="hidden">Staff</button>
       <button id="nav-logout">Sign Out</button>
     </div>
-    <div id="staff-info">
+    <div class="header-user">
+      <div class="user-avatar" id="user-avatar">?</div>
       <span id="staff-display"></span>
     </div>
   </header>
@@ -105,6 +128,6 @@
 
 </div>
 
-<script type="module" src="/js/app.js"></script>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
