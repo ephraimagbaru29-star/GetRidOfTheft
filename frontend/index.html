@@ -3,130 +3,230 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Phone Charging Tracker</title>
+  <title>ChargeTrack — Phone Charging Management</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
-<!-- ── Login Screen ─────────────────────────────────────────────── -->
+<!-- ══════════════════════════════════════════════════════════════
+     AUTH SCREEN
+═══════════════════════════════════════════════════════════════ -->
 <div id="login-screen">
 
-  <div class="login-card">
-    <!-- Logo -->
-    <div class="login-logo">
-      <div class="logo-icon">🔋</div>
-      <h1>ChargeTrack</h1>
-      <p>Phone Charging Management System</p>
+  <!-- Top navbar -->
+  <nav class="auth-navbar">
+    <div class="auth-nav-brand">
+      <div class="auth-nav-logo">⚡</div>
+      <span class="brand-charge">Charge</span><span class="brand-track">Track</span>
     </div>
-
-    <!-- Tabs -->
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-login" onclick="
-        this.classList.add('active');
-        document.getElementById('tab-register').classList.remove('active');
-        document.getElementById('panel-login').classList.remove('hidden');
-        document.getElementById('panel-register').classList.add('hidden');
-      ">Sign In</button>
-      <button class="auth-tab" id="tab-register" onclick="
-        this.classList.add('active');
-        document.getElementById('tab-login').classList.remove('active');
-        document.getElementById('panel-register').classList.remove('hidden');
-        document.getElementById('panel-login').classList.add('hidden');
-      ">Create Account</button>
+    <div class="auth-nav-tagline">Phone Charging Management System</div>
+    <div class="auth-nav-right">
+      <span class="auth-nav-logo-sm">🔋</span>
+      Charge Safe. Stay Secure.
     </div>
+  </nav>
 
-    <!-- Login Panel -->
-    <div id="panel-login">
-      <div id="login-error" class="alert alert-error hidden"></div>
-      <form id="login-form" novalidate>
-        <div class="form-group">
-          <label for="login-username">Username</label>
-          <input id="login-username" type="text" autocomplete="username" placeholder="Enter your username" required />
-        </div>
-        <div class="form-group">
-          <label for="login-password">Password</label>
-          <input id="login-password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
-        </div>
-        <button class="btn btn-primary btn-full btn-lg" type="submit">Sign In →</button>
-      </form>
-      <p style="text-align:center;font-size:.83rem;color:var(--text-muted);margin-top:1rem">
-        New here?
-        <button id="show-register-btn" style="background:none;border:none;color:var(--accent);font-weight:600;cursor:pointer;font-size:.83rem;font-family:inherit">Create an account</button>
-      </p>
-    </div>
+  <!-- Main card -->
+  <div class="auth-page-bg">
+    <div class="auth-main-card">
 
-    <!-- Register Panel -->
-    <div id="panel-register" class="hidden">
-      <div id="register-error"   class="alert alert-error   hidden"></div>
-      <div id="register-success" class="alert alert-success hidden"></div>
-      <form id="register-form" novalidate>
-        <div class="form-group">
-          <label for="reg-displayname">Full Name</label>
-          <input id="reg-displayname" type="text" placeholder="e.g. John Doe" required />
+      <!-- Card header -->
+      <div class="auth-card-header">
+        <div class="auth-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><line x1="19" y1="8" x2="22" y2="8"/><line x1="20.5" y1="6.5" x2="20.5" y2="9.5"/></svg>
         </div>
-        <div class="form-group">
-          <label for="reg-username">Username</label>
-          <input id="reg-username" type="text" placeholder="Choose a username" autocomplete="off" required />
+        <div>
+          <h1 class="auth-card-title">Create Account</h1>
+          <p class="auth-card-subtitle">Join ChargeTrack and enjoy a secure charging experience</p>
         </div>
-        <div class="form-group">
-          <label for="reg-password">Password</label>
-          <input id="reg-password" type="password" placeholder="At least 8 characters" autocomplete="new-password" required />
-        </div>
-        <div class="form-group">
-          <label for="reg-password2">Confirm Password</label>
-          <input id="reg-password2" type="password" placeholder="Repeat password" autocomplete="new-password" required />
-        </div>
-        <button class="btn btn-primary btn-full btn-lg" type="submit">Create Account →</button>
-      </form>
-      <p style="text-align:center;font-size:.83rem;color:var(--text-muted);margin-top:1rem">
-        Already have an account?
-        <button id="show-login-btn" style="background:none;border:none;color:var(--accent);font-weight:600;cursor:pointer;font-size:.83rem;font-family:inherit">Sign in</button>
-      </p>
-    </div>
-  </div>
+      </div>
+      <div class="auth-card-divider"></div>
 
-</div>
+      <!-- Two-column body -->
+      <div class="auth-columns">
 
-<!-- ── Main App ──────────────────────────────────────────────────── -->
+        <!-- ── LEFT: Sign In ── -->
+        <div class="auth-col auth-col-left">
+          <button class="auth-col-tab active" id="tab-signin-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            Sign In
+          </button>
+
+          <div id="login-error" class="auth-alert auth-alert-error hidden"></div>
+
+          <form id="login-form" novalidate>
+            <div class="auth-field-group">
+              <label class="auth-label">Username</label>
+              <div class="auth-input-wrap">
+                <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                <input id="login-username" type="text" class="auth-input" placeholder="Enter username" autocomplete="username" />
+              </div>
+            </div>
+            <div class="auth-field-group">
+              <label class="auth-label">Password</label>
+              <div class="auth-input-wrap">
+                <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input id="login-password" type="password" class="auth-input" placeholder="Enter password" autocomplete="current-password" />
+              </div>
+            </div>
+            <button class="auth-btn auth-btn-blue" type="submit">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              Sign In
+            </button>
+          </form>
+
+          <a href="#" class="auth-forgot" onclick="return false">Forgot Password?</a>
+        </div>
+
+        <!-- ── RIGHT: Create Account + Hero ── -->
+        <div class="auth-col auth-col-right">
+
+          <!-- Register form -->
+          <div class="auth-register-form">
+            <button class="auth-col-tab active" id="tab-register-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><line x1="19" y1="8" x2="22" y2="8"/><line x1="20.5" y1="6.5" x2="20.5" y2="9.5"/></svg>
+              Create Account
+            </button>
+
+            <div id="register-error"   class="auth-alert auth-alert-error   hidden"></div>
+            <div id="register-success" class="auth-alert auth-alert-success hidden"></div>
+
+            <form id="register-form" novalidate>
+              <div class="auth-field-group">
+                <label class="auth-label">Full Name</label>
+                <div class="auth-input-wrap">
+                  <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                  <input id="reg-displayname" type="text" class="auth-input" placeholder="e.g. John Doe" />
+                </div>
+              </div>
+              <div class="auth-field-group">
+                <label class="auth-label">Username</label>
+                <div class="auth-input-wrap">
+                  <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                  <input id="reg-username" type="text" class="auth-input" placeholder="Choose a username" autocomplete="off" />
+                </div>
+              </div>
+              <div class="auth-field-group">
+                <label class="auth-label">Password</label>
+                <div class="auth-input-wrap">
+                  <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <input id="reg-password" type="password" class="auth-input" placeholder="At least 8 characters" autocomplete="new-password" />
+                </div>
+              </div>
+              <div class="auth-field-group">
+                <label class="auth-label">Confirm Password</label>
+                <div class="auth-input-wrap">
+                  <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <input id="reg-password2" type="password" class="auth-input" placeholder="Re-enter password" autocomplete="new-password" />
+                </div>
+              </div>
+              <button class="auth-btn auth-btn-green" type="submit">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Create Account
+              </button>
+            </form>
+
+            <p class="auth-switch-text">
+              Already have an account?
+              <a href="#" id="switch-to-login" onclick="return false">Sign in</a>
+            </p>
+          </div>
+
+          <!-- Hero panel -->
+          <div class="auth-hero-panel">
+            <div class="auth-hero-content">
+              <h2 class="auth-hero-title">Charge Smart,<br/><span>Stay Secure!</span></h2>
+
+              <!-- Phone mockup -->
+              <div class="auth-phone-wrap">
+                <div class="auth-phone">
+                  <div class="auth-phone-screen">
+                    <div class="auth-battery-icon">🔋</div>
+                    <div class="auth-charging-text">Charging...</div>
+                  </div>
+                </div>
+                <div class="auth-cable">
+                  <svg viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 20 Q60 5 120 20" stroke="#60a5fa" stroke-width="3" fill="none" stroke-dasharray="4 3" opacity=".8"/>
+                    <rect x="108" y="14" width="14" height="12" rx="3" fill="#93c5fd"/>
+                    <rect x="114" y="10" width="4" height="5" rx="1" fill="#bfdbfe"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Feature icons -->
+              <div class="auth-features">
+                <div class="auth-feature">
+                  <div class="auth-feature-icon">🔒</div>
+                  <div class="auth-feature-label">Secure<br/>&amp; Reliable</div>
+                </div>
+                <div class="auth-feature-divider"></div>
+                <div class="auth-feature">
+                  <div class="auth-feature-icon">⚡</div>
+                  <div class="auth-feature-label">Fast<br/>Access</div>
+                </div>
+                <div class="auth-feature-divider"></div>
+                <div class="auth-feature">
+                  <div class="auth-feature-icon">👥</div>
+                  <div class="auth-feature-label">Better<br/>Service</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /auth-col-right -->
+      </div><!-- /auth-columns -->
+
+      <!-- Already have account row (below left col) -->
+      <div class="auth-already-row">
+        Already have an account? <a href="#" id="already-signin-link" onclick="return false">Sign in</a>
+      </div>
+
+    </div><!-- /auth-main-card -->
+  </div><!-- /auth-page-bg -->
+
+  <!-- Footer -->
+  <footer class="auth-footer">
+    <span>© 2026 <span class="footer-brand">ChargeTrack</span>. All rights reserved.</span>
+    <span class="footer-right">❤️ Powered for a Safer Charging Experience</span>
+  </footer>
+
+</div><!-- /login-screen -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     MAIN APP
+═══════════════════════════════════════════════════════════════ -->
 <div id="app" class="hidden">
 
-  <header>
-    <div class="header-brand">
-      <div class="brand-icon">🔋</div>
-      ChargeTrack
+  <header class="app-header">
+    <div class="app-brand">
+      <div class="app-brand-icon">⚡</div>
+      <span class="brand-charge">Charge</span><span class="brand-track">Track</span>
     </div>
-    <div id="nav-links">
+    <nav id="nav-links">
       <button data-screen="dashboard" id="nav-dashboard">Dashboard</button>
       <button data-screen="intake"    id="nav-intake">New Intake</button>
       <button data-screen="search"    id="nav-search">Search / Collect</button>
       <button data-screen="history"   id="nav-history">History</button>
       <button data-screen="staff"     id="nav-staff" class="hidden">Staff</button>
-      <button id="nav-logout">Sign Out</button>
-    </div>
-    <div class="header-user">
-      <div class="user-avatar" id="user-avatar">?</div>
+      <button id="nav-logout" class="nav-logout">Sign Out</button>
+    </nav>
+    <div class="app-header-user">
+      <div class="app-avatar" id="user-avatar">?</div>
       <span id="staff-display"></span>
     </div>
   </header>
 
-  <main>
-    <!-- Dashboard -->
+  <main class="app-main">
     <div id="screen-dashboard" class="screen hidden"></div>
-
-    <!-- New Intake -->
-    <div id="screen-intake" class="screen hidden"></div>
-
-    <!-- Search / Collection -->
-    <div id="screen-search" class="screen hidden"></div>
-
-    <!-- History -->
-    <div id="screen-history" class="screen hidden"></div>
-
-    <!-- Staff Management (owner only) -->
-    <div id="screen-staff" class="screen hidden"></div>
+    <div id="screen-intake"    class="screen hidden"></div>
+    <div id="screen-search"    class="screen hidden"></div>
+    <div id="screen-history"   class="screen hidden"></div>
+    <div id="screen-staff"     class="screen hidden"></div>
   </main>
 
-</div>
+</div><!-- /app -->
 
 <script type="module" src="js/app.js"></script>
 </body>

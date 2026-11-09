@@ -34,23 +34,16 @@ function showLoginScreen() {
   Utils.hide(document.getElementById('app'));
   Utils.show(document.getElementById('login-screen'));
 
-  // Only wire up listeners once to prevent duplicate handlers
   if (_loginInitialized) return;
   _loginInitialized = true;
 
-  // Tab switching
-  document.getElementById('show-register-btn').addEventListener('click', () => {
-    document.getElementById('tab-login').classList.remove('active');
-    document.getElementById('tab-register').classList.add('active');
-    Utils.hide(document.getElementById('panel-login'));
-    Utils.show(document.getElementById('panel-register'));
-  });
-  document.getElementById('show-login-btn').addEventListener('click', () => {
-    document.getElementById('tab-register').classList.remove('active');
-    document.getElementById('tab-login').classList.add('active');
-    Utils.hide(document.getElementById('panel-register'));
-    Utils.show(document.getElementById('panel-login'));
-  });
+  // "Already have an account? Sign in" and "switch-to-login" links
+  // show the left column and hide register (on mobile they stack)
+  const switchToLogin = () => {
+    document.getElementById('tab-signin-btn')?.scrollIntoView({ behavior: 'smooth' });
+  };
+  document.getElementById('switch-to-login')?.addEventListener('click', switchToLogin);
+  document.getElementById('already-signin-link')?.addEventListener('click', switchToLogin);
 
   // Login form
   document.getElementById('login-form').addEventListener('submit', async (e) => {
