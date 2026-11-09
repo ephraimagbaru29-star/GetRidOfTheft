@@ -10,16 +10,10 @@ const faceRoutes = require('./routes/face');
 const app = express();
 
 // ── Middleware ───────────────────────────────────────────────────
-const allowedOrigins = (process.env.CORS_ORIGIN || '*').split(',').map(o => o.trim());
+// Temporarily allow all origins to diagnose fetch failures.
+// Lock this down to specific domains once confirmed working.
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (e.g. curl, Render health checks)
-    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS: origin ${origin} not allowed`));
-    }
-  },
+  origin: true,
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
