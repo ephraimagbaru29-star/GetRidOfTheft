@@ -1,7 +1,12 @@
 {
   "version": 2,
-  "buildCommand": "",
   "outputDirectory": "frontend",
+  "buildCommand": "",
   "installCommand": "",
-  "framework": null
+  "framework": null,
+  "routes": [
+    { "src": "/css/(.*)",  "dest": "/css/$1" },
+    { "src": "/js/(.*)",   "dest": "/js/$1" },
+    { "src": "/(.*)",      "dest": "/$1" }
+  ]
 }
